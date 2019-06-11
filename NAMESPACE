@@ -1,3 +1,5 @@
 useDynLib(roprobit, .registration=TRUE)
 importFrom(Rcpp, evalCpp)
 exportPattern("^[[:alpha:]]+")
+import(Matrix)
+import(truncnorm)
