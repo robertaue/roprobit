@@ -39,7 +39,9 @@ List roprobit_internal(arma::sp_mat X,
   arma::uword chunk5percent = floor( (double) niter / (double) 20);
   
   omp_set_num_threads(nCores);
+#ifdef DEBUG
   std::cout.setf(std::ios::unitbuf); // for debugging
+#endif
   
   // generate helper variables
   int Nsamples = floor(niter / thin);
@@ -50,10 +52,10 @@ List roprobit_internal(arma::sp_mat X,
   //arma::mat XXinv = arma::spsolve(trans(X)*X, arma::eye(X.n_cols, X.n_cols)); // requires superLU solver ...
   arma::sp_mat Proj = XXinv * trans(X);
   arma::vec MaxUnranked(nIDs, fill::zeros); // cannot fill directly with INF
-  arma::vec MinRanked(nIDs, fill::zeros);
+  //arma::vec MinRanked(nIDs, fill::zeros);
   for (arma::uword i=0; i<nIDs; i++) {
     MaxUnranked[i] = -INF;
-    MinRanked[i] = INF;
+    //MinRanked[i] = INF;
   }
   arma::uvec ChoiceSetLength = Rcpp::as<arma::uvec>( ChoiceSetLengthR );
   arma::uvec ROLLength = Rcpp::as<arma::uvec>( ROLLengthR );
@@ -88,7 +90,7 @@ List roprobit_internal(arma::sp_mat X,
       Nchoices_i = ChoiceSetLength[i];
       Nranked_i = ROLLength[i];
       MaxUnranked_i = ( Nranked_i<Nchoices_i ? Y.subvec((k+Nranked_i-1), (k+Nchoices_i-1)).min() : -INF);
-      MinRanked_i = MinRanked[i];
+      //MinRanked_i = MinRanked[i];
       upper_bound = INF;
       lower_bound = -INF;
       for (r=1; r<=Nchoices_i; r++) {
@@ -114,7 +116,7 @@ List roprobit_internal(arma::sp_mat X,
         // update maximum unranked and minimum ranked utility
         if (r==Nranked_i) {
           MinRanked_i = Y[k];
-          MinRanked[i] = MinRanked_i;
+          //MinRanked[i] = MinRanked_i;
         }
         // increment vector position
         k += 1;
@@ -145,7 +147,7 @@ List roprobit_internal(arma::sp_mat X,
   return List::create(  
     // parameter draws
     Named("betadraws") = betavalues,
-    Named("foo") = 1
+    Named("Y") = Y
   );
 }
 

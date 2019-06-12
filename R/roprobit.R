@@ -42,9 +42,11 @@ roprobit <- function(formula, group.ID, data, na.last=T, niter=500, thin=10, bur
     # override default behavious to drop rows where the depvar is missing:
     data$zdheiffuj82j <- 1
     X <- sparse.model.matrix(update(formula, zdheiffuj82j~.), data)
+    outdata <- data[,c(group.ID, rankvar)]
   } else { 
     ChoiceSetLength <- ROL.length 
     X <- sparse.model.matrix(formula, data) # will omit rows where rank information is missing
+    outdata <- data[!is.na(data[[rankvar]]),c(group.ID, rankvar)]
   }
   nCoef <- dim(X)[2]
   MaxUnranked <- rep(-Inf, nIDs)
@@ -115,9 +117,12 @@ roprobit <- function(formula, group.ID, data, na.last=T, niter=500, thin=10, bur
       Xb <- X %*% beta
     }
     
+    outdata$latentvalution <- res$Y
+    
   } else if (method == 'Gibbs') {
     res <- roprobit_internal(X=X, XXinv=XXinv, niter=niter, thin=thin, ChoiceSetLength=ChoiceSetLength, ROLLength=ROL.length, nCores=nCores)
     betavalues <- res$betadraws
+    outdata$latentvalution <- res$Y
   } else if (method == 'MSL') {
     print('Maximum simulated likelihood method not yet implemented.')
     return(0)
@@ -128,8 +133,7 @@ roprobit <- function(formula, group.ID, data, na.last=T, niter=500, thin=10, bur
   beta.hat <- colMeans(betavalues[burnin:nSamples,])
   beta.vcov <- cov(betavalues[burnin:nSamples,])
   
-  
-  est <- list(coef=beta.hat, vcov=beta.vcov, betavalues=betavalues, niter=niter, burnin=burnin, thin=thin, method=method)
+  est <- list(coef=beta.hat, vcov=beta.vcov, betavalues=betavalues, niter=niter, burnin=burnin, thin=thin, method=method, valuations=outdata)
   class(est) <- "roprobit"
   
   return(est)
