@@ -9,12 +9,13 @@
 #' @param thin thinning parameter
 #' @param burnin number of discarded samples (in the thinned series)
 #' @param method 'MSL' for maximum simulated likelihood, 'Gibbs' for data augmentation
+#' @param nCores number of parallel cores to use (only with method='Gibbs')
 #' 
 #' @examples put example here
 #' 
 
 
-roprobit <- function(formula, group.ID, data, na.last=T, niter=500, thin=10, burnin=50, method='Gibbs') {
+roprobit <- function(formula, group.ID, data, na.last=T, niter=500, thin=10, burnin=50, method='Gibbs', nCores=1) {
   
   # consistency checks
   stopifnot(method %in% c('MSL','Gibbs', 'Gibbs.R'))
@@ -115,7 +116,7 @@ roprobit <- function(formula, group.ID, data, na.last=T, niter=500, thin=10, bur
     }
     
   } else if (method == 'Gibbs') {
-    res <- roprobit_internal(X=X, XXinv=XXinv, niter=niter, thin=thin, ChoiceSetLength=ChoiceSetLength, ROLLength=ROL.length)
+    res <- roprobit_internal(X=X, XXinv=XXinv, niter=niter, thin=thin, ChoiceSetLength=ChoiceSetLength, ROLLength=ROL.length, nCores=nCores)
     betavalues <- res$betadraws
   } else if (method == 'MSL') {
     print('Maximum simulated likelihood method not yet implemented.')

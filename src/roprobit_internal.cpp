@@ -1,8 +1,10 @@
 //#define ARMA_USE_SUPERLU
-//#define ARMA_NO_DEBUG
+#define ARMA_NO_DEBUG
+//#define DEBUG
 #include <RcppArmadillo.h>
 #include <stdio.h>
 #include <time.h>
+#include <omp.h>
 #include "aux_functions.h"
 
 #define INF arma::datum::inf
@@ -30,13 +32,14 @@ List roprobit_internal(arma::sp_mat X,
                        int niterR,
                        int thinR,
                        Rcpp::NumericVector ChoiceSetLengthR,
-                       Rcpp::NumericVector ROLLengthR) {
+                       Rcpp::NumericVector ROLLengthR,
+                       int nCores) {
   // initialize variables
-  arma::uword k=0, i=0, nIDs=ChoiceSetLengthR.length(),
-    Nchoices_i=1, Nranked_i=1, r=1, iter=0, niter=niterR, thin=thinR;
-  double upper_bound=INF, lower_bound=-INF, 
-    MaxUnranked_i=-INF, MinRanked_i=INF,
-    u=0, Xb_k=0;
+  arma::uword nIDs=ChoiceSetLengthR.length(), niter=niterR, thin=thinR;
+  arma::uword chunk5percent = floor( (double) niter / (double) 20);
+  
+  omp_set_num_threads(nCores);
+  std::cout.setf(std::ios::unitbuf); // for debugging
   
   // generate helper variables
   int Nsamples = floor(niter / thin);
@@ -48,16 +51,39 @@ List roprobit_internal(arma::sp_mat X,
   arma::sp_mat Proj = XXinv * trans(X);
   arma::vec MaxUnranked(nIDs, fill::zeros); // cannot fill directly with INF
   arma::vec MinRanked(nIDs, fill::zeros);
-  for (i=0; i<nIDs; i++) {
+  for (arma::uword i=0; i<nIDs; i++) {
     MaxUnranked[i] = -INF;
     MinRanked[i] = INF;
   }
   arma::uvec ChoiceSetLength = Rcpp::as<arma::uvec>( ChoiceSetLengthR );
   arma::uvec ROLLength = Rcpp::as<arma::uvec>( ROLLengthR );
-
+  arma::uvec StartPosition = cumsum(ChoiceSetLength) - ChoiceSetLength;
+  /*Rcpp::Rcout << ChoiceSetLength.head(5) << std::endl;
+  Rcpp::Rcout << ROLLength.head(5) << std::endl;
+  Rcpp::Rcout << StartPosition.head(5) << std::endl;*/
+  
+  Rcpp::Rcout << "Drawing " << niter << " MC samples (each . = 5%%) ";
+  
+#pragma omp parallel
+{
+  // initialize thread-private variables
+  arma::uword k=0, i=0, Nchoices_i=1, Nranked_i=1, r=1, iter=0;
+  double upper_bound=INF, lower_bound=-INF, 
+    MaxUnranked_i=-INF, MinRanked_i=INF,
+    u=0, Xb_k=0;
+  
   for (iter=0; iter<niter; iter++) {
-    k = 0;
+    
+#ifdef DEBUG 
+    printf("tid=%d: iter=%d\n", omp_get_thread_num(), iter);
+#endif
+    
+#pragma omp for private(i)
     for (i=0; i<nIDs; i++) {
+#ifdef DEBUG
+      printf("tid=%d: i=%d\n", omp_get_thread_num(), i);
+#endif
+      k = StartPosition[i];
       // store variables to reduce memory access
       Nchoices_i = ChoiceSetLength[i];
       Nranked_i = ROLLength[i];
@@ -95,14 +121,26 @@ List roprobit_internal(arma::sp_mat X,
       }
     }
     
-    // estimate linear model
+#ifdef DEBUG
+    printf("tid=%d: end iter=%d\n", omp_get_thread_num(), iter);
+#endif
+ 
+ // estimate linear model   
+#pragma omp single
+{
     beta = Proj*Y;
-    // Rcpp::Rcout << beta;
     if ( (iter % thin == 0) ) betavalues.row(iter/thin) = trans(beta);
     Xb = X*beta;
-  }
+    
+#ifndef DEBUG
+    if ( !fmod(iter, chunk5percent) ) Rcpp::Rcout << '.';
+#endif
+} // end single
+  } // end iter
+} // end parallel
   
-  Rcpp::Rcout << "Done.\n";
+  
+  Rcpp::Rcout << " Done.\n";
   
   return List::create(  
     // parameter draws
