@@ -31,6 +31,7 @@ List roprobit_internal(arma::sp_mat X,
                        arma::sp_mat XXinv,
                        int niterR,
                        int thinR,
+                       Rcpp::NumericMatrix initparm, // initial parameters
                        Rcpp::NumericVector ChoiceSetLengthR,
                        Rcpp::NumericVector ROLLengthR,
                        int nCores) {
@@ -45,7 +46,8 @@ List roprobit_internal(arma::sp_mat X,
   
   // generate helper variables
   int Nsamples = floor(niter / thin);
-  arma::colvec beta = arma::zeros(X.n_cols,1);
+  //arma::colvec beta = arma::zeros(X.n_cols,1);
+  arma::colvec beta = Rcpp::as<arma::colvec>( initparm );
   arma::mat betavalues = arma::zeros(Nsamples, X.n_cols);
   arma::colvec Y = X*beta;
   arma::colvec Xb = Y;
@@ -89,7 +91,7 @@ List roprobit_internal(arma::sp_mat X,
       // store variables to reduce memory access
       Nchoices_i = ChoiceSetLength[i];
       Nranked_i = ROLLength[i];
-      MaxUnranked_i = ( Nranked_i<Nchoices_i ? Y.subvec((k+Nranked_i-1), (k+Nchoices_i-1)).min() : -INF);
+      MaxUnranked_i = ( Nranked_i<Nchoices_i ? Y.subvec((k+Nranked_i), (k+Nchoices_i-1)).max() : -INF);
       //MinRanked_i = MinRanked[i];
       upper_bound = INF;
       lower_bound = -INF;
