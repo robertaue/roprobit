@@ -143,10 +143,22 @@ roprobit <- function(formula, group.ID, choice.ID=NULL, data, na.last=T, niter=5
   
   # get parameter estimates
   colnames(betavalues) <- colnames(X)
-  beta.hat <- colMeans(betavalues[burnin:nSamples,])
-  beta.vcov <- cov(betavalues[burnin:nSamples,])
+  if (nCoef>1) {
+    beta.hat <- colMeans(betavalues[burnin:nSamples,])
+    beta.vcov <- cov(betavalues[burnin:nSamples,])
+    beta.ci95 <- apply(betavalues, 2, FUN=function(z) quantile(z[burnin:nSamples], c(.025,.975)))
+  } else {
+    beta.hat <- as.vector(mean(betavalues[burnin:nSamples,]))
+    names(beta.hat) <- varnames
+    beta.vcov <- matrix(var(betavalues[burnin:nSamples,]), ncol=1, nrow=1)
+    colnames(beta.vcov) <- varnames
+    rownames(beta.vcov) <- varnames
+    beta.ci95 <- matrix(quantile(betavalues[burnin:nSamples], c(.025,.975)), ncol=1)
+    colnames(beta.ci95) <- varnames
+    rownames(beta.ci95) <- c('2.5%','97.5%')
+  }
   
-  est <- list(coef=beta.hat, vcov=beta.vcov, betavalues=betavalues, niter=niter, burnin=burnin, thin=thin, method=method, valuations=outdata)
+  est <- list(coef=beta.hat, vcov=beta.vcov, beta.ci95=beta.ci95, betavalues=betavalues, niter=niter, burnin=burnin, thin=thin, method=method, valuations=outdata)
   class(est) <- "roprobit"
   
   return(est)
