@@ -149,7 +149,8 @@ List roprobit_internal(arma::sp_mat X,
   return List::create(  
     // parameter draws
     Named("betadraws") = betavalues,
-    Named("Y") = Y
+    Named("Y") = Y,
+    Named("Xb") = Xb
   );
 }
 
