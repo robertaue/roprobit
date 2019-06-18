@@ -6,55 +6,27 @@
 
 using namespace Rcpp;
 
-// rcpparma_hello_world
-arma::mat rcpparma_hello_world();
-RcppExport SEXP _roprobit_rcpparma_hello_world() {
+// roprobit_internal
+List roprobit_internal(arma::sp_mat X, arma::sp_mat XXinv, int niterR, int thinR, Rcpp::NumericMatrix initparm, Rcpp::NumericVector ChoiceSetLengthR, Rcpp::NumericVector ROLLengthR, int nCores);
+RcppExport SEXP _roprobit_roprobit_internal(SEXP XSEXP, SEXP XXinvSEXP, SEXP niterRSEXP, SEXP thinRSEXP, SEXP initparmSEXP, SEXP ChoiceSetLengthRSEXP, SEXP ROLLengthRSEXP, SEXP nCoresSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(rcpparma_hello_world());
-    return rcpp_result_gen;
-END_RCPP
-}
-// rcpparma_outerproduct
-arma::mat rcpparma_outerproduct(const arma::colvec& x);
-RcppExport SEXP _roprobit_rcpparma_outerproduct(SEXP xSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::colvec& >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpparma_outerproduct(x));
-    return rcpp_result_gen;
-END_RCPP
-}
-// rcpparma_innerproduct
-double rcpparma_innerproduct(const arma::colvec& x);
-RcppExport SEXP _roprobit_rcpparma_innerproduct(SEXP xSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::colvec& >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpparma_innerproduct(x));
-    return rcpp_result_gen;
-END_RCPP
-}
-// rcpparma_bothproducts
-Rcpp::List rcpparma_bothproducts(const arma::colvec& x);
-RcppExport SEXP _roprobit_rcpparma_bothproducts(SEXP xSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::colvec& >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpparma_bothproducts(x));
+    Rcpp::traits::input_parameter< arma::sp_mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::sp_mat >::type XXinv(XXinvSEXP);
+    Rcpp::traits::input_parameter< int >::type niterR(niterRSEXP);
+    Rcpp::traits::input_parameter< int >::type thinR(thinRSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type initparm(initparmSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type ChoiceSetLengthR(ChoiceSetLengthRSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type ROLLengthR(ROLLengthRSEXP);
+    Rcpp::traits::input_parameter< int >::type nCores(nCoresSEXP);
+    rcpp_result_gen = Rcpp::wrap(roprobit_internal(X, XXinv, niterR, thinR, initparm, ChoiceSetLengthR, ROLLengthR, nCores));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_roprobit_rcpparma_hello_world", (DL_FUNC) &_roprobit_rcpparma_hello_world, 0},
-    {"_roprobit_rcpparma_outerproduct", (DL_FUNC) &_roprobit_rcpparma_outerproduct, 1},
-    {"_roprobit_rcpparma_innerproduct", (DL_FUNC) &_roprobit_rcpparma_innerproduct, 1},
-    {"_roprobit_rcpparma_bothproducts", (DL_FUNC) &_roprobit_rcpparma_bothproducts, 1},
+    {"_roprobit_roprobit_internal", (DL_FUNC) &_roprobit_roprobit_internal, 8},
     {NULL, NULL, 0}
 };
 

@@ -2,43 +2,82 @@
     {
         "definitions" : [
             {
-                "column" : 11,
-                "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/rcpparma_hello_world.cpp",
+                "column" : 8,
+                "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/aux_functions.cpp",
                 "kind" : 6,
-                "line" : 18,
-                "name" : "rcpparma_hello_world",
+                "line" : 12,
+                "name" : "norm_rs(double, double)",
                 "parent_name" : "",
-                "usr" : "c:@F@rcpparma_hello_world#"
-            },
-            {
-                "column" : 11,
-                "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/rcpparma_hello_world.cpp",
-                "kind" : 6,
-                "line" : 30,
-                "name" : "rcpparma_outerproduct(const arma::colvec &)",
-                "parent_name" : "",
-                "usr" : "c:@F@rcpparma_outerproduct#&1$@N@arma@C@Col>#d#"
+                "usr" : "c:@F@norm_rs#d#d#"
             },
             {
                 "column" : 8,
-                "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/rcpparma_hello_world.cpp",
+                "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/aux_functions.cpp",
                 "kind" : 6,
-                "line" : 38,
-                "name" : "rcpparma_innerproduct(const arma::colvec &)",
+                "line" : 25,
+                "name" : "half_norm_rs(double, double)",
                 "parent_name" : "",
-                "usr" : "c:@F@rcpparma_innerproduct#&1$@N@arma@C@Col>#d#"
+                "usr" : "c:@F@half_norm_rs#d#d#"
             },
             {
-                "column" : 12,
-                "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/rcpparma_hello_world.cpp",
+                "column" : 8,
+                "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/aux_functions.cpp",
                 "kind" : 6,
-                "line" : 47,
-                "name" : "rcpparma_bothproducts(const arma::colvec &)",
+                "line" : 38,
+                "name" : "unif_rs(double, double)",
                 "parent_name" : "",
-                "usr" : "c:@F@rcpparma_bothproducts#&1$@N@arma@C@Col>#d#"
+                "usr" : "c:@F@unif_rs#d#d#"
+            },
+            {
+                "column" : 8,
+                "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/aux_functions.cpp",
+                "kind" : 6,
+                "line" : 63,
+                "name" : "exp_rs(double, double)",
+                "parent_name" : "",
+                "usr" : "c:@F@exp_rs#d#d#"
+            },
+            {
+                "column" : 8,
+                "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/aux_functions.cpp",
+                "kind" : 6,
+                "line" : 90,
+                "name" : "truncn2(double, double, double, double)",
+                "parent_name" : "",
+                "usr" : "c:@F@truncn2#d#d#d#d#"
+            },
+            {
+                "column" : 14,
+                "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/aux_functions.cpp",
+                "kind" : 6,
+                "line" : 150,
+                "name" : "mvrnormArma(arma::colvec, arma::mat, int)",
+                "parent_name" : "",
+                "usr" : "c:@F@mvrnormArma#$@N@arma@C@Col>#d#$@N@arma@C@Mat>#d#I#"
             }
         ],
-        "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/rcpparma_hello_world.cpp",
-        "file_last_write" : 1559652583
+        "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/aux_functions.cpp",
+        "file_last_write" : 1548321394
+    },
+    {
+        "definitions" : [
+        ],
+        "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/aux_functions.h",
+        "file_last_write" : 1548056278
+    },
+    {
+        "definitions" : [
+            {
+                "column" : 6,
+                "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/roprobit_internal.cpp",
+                "kind" : 6,
+                "line" : 30,
+                "name" : "roprobit_internal(arma::sp_mat, arma::sp_mat, int, int, Rcpp::NumericMatrix, Rcpp::NumericVector, Rcpp::NumericVector, int)",
+                "parent_name" : "",
+                "usr" : "c:@F@roprobit_internal#$@N@arma@C@SpMat>#d#S0_#I#I#$@N@Rcpp@C@Matrix>#VI14#@N@Rcpp@CT>1#T@PreserveStorage#$@N@Rcpp@C@Vector>#VI14#@N@Rcpp@CT>1#T@PreserveStorage#S2_#I#"
+            }
+        ],
+        "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/roprobit_internal.cpp",
+        "file_last_write" : 1560610161
     }
 ]

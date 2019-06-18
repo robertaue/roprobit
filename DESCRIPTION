@@ -7,5 +7,5 @@ Author: Robert Aue
 Maintainer: Who to complain to <yourfault@somewhere.net>
 Description: More about what it does (maybe more than one line)
 License: What license is it under?
-Imports: Rcpp (>= 1.0.0), Matrix, truncnorm
+Imports: Rcpp (>= 1.0.0), Matrix, truncnorm, mvtnorm
 LinkingTo: Rcpp, RcppArmadillo
