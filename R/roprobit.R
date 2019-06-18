@@ -80,7 +80,7 @@ roprobit <- function(formula, group.ID, choice.ID=NULL, data, na.last=T, niter=5
         # store variables to reduce memory access
         Nchoices <- ChoiceSetLength[i]
         Nranked <- ROL.length[i]
-        MaxUnranked_i <- ifelse(Nranked<Nchoices, Y[(k+Nranked):(k+Nchoices)], -Inf)
+        MaxUnranked_i <- ifelse(Nranked<Nchoices, max(Y[(k+Nranked):(k+Nchoices)]), -Inf)
         MinRanked_i <- MinRanked[i]
         upper_bound <- Inf
         lower_bound <- -Inf
