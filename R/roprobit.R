@@ -3,6 +3,7 @@
 #' This function estimates a rank ordered probit model
 #' @param formula rank ~ explanatory variables. lower rank = better
 #' @param group.ID variable containing the IDs of the decision making units
+#' @param choice.ID variable identifying the choices - not needed for estimation, only to return laten valuations when ranks are missing
 #' @param data a data.frame
 #' @param na.last =TRUE if missing ranks are interpreted as being among the least preferred
 #' @param niter number of data augmentation iterations
@@ -15,7 +16,7 @@
 #' 
 
 
-roprobit <- function(formula, group.ID, data, na.last=T, niter=500, thin=10, burnin=50, method='Gibbs', nCores=1) {
+roprobit <- function(formula, group.ID, choice.ID=NULL, data, na.last=T, niter=500, thin=10, burnin=50, method='Gibbs', initparm=NULL, nCores=1) {
   
   # consistency checks
   stopifnot(method %in% c('MSL','Gibbs', 'Gibbs.R'))
@@ -42,23 +43,32 @@ roprobit <- function(formula, group.ID, data, na.last=T, niter=500, thin=10, bur
     # override default behavious to drop rows where the depvar is missing:
     data$zdheiffuj82j <- 1
     X <- sparse.model.matrix(update(formula, zdheiffuj82j~.), data)
-    outdata <- data[,c(group.ID, rankvar)]
+    outdata <- data[,c(group.ID, rankvar, choice.ID)]
+    which.notNA <- which(!is.na(data[[rankvar]]))
+    XnotNA <- X[which.notNA,]
+    ProjnotNA <- solve(t(XnotNA)%*%XnotNA) %*% t(XnotNA)
   } else { 
     ChoiceSetLength <- ROL.length 
     X <- sparse.model.matrix(formula, data) # will omit rows where rank information is missing
-    outdata <- data[!is.na(data[[rankvar]]),c(group.ID, rankvar)]
+    outdata <- data[!is.na(data[[rankvar]]),c(group.ID, rankvar, choice.ID)]
   }
   nCoef <- dim(X)[2]
   MaxUnranked <- rep(-Inf, nIDs)
   MinRanked <- rep(Inf, nIDs)
-  
-  # simulate ordered probit model (Gibbs sampling, data augmentation)
   XXinv <- solve(t(X)%*%X)
+  
+  # initial parameter
+  if (is.null(initparm)) {
+    beta <- matrix(0, nrow=nCoef)
+  } else {
+    stopifnot(length(initparm)==nCoef)
+    beta <- matrix(initparm, ncol=1, nrow=nCoef)
+  }
+  
   
 
   if (method == 'Gibbs.R') {
     # initialize values
-    beta <- matrix(0, nrow=nCoef)
     betavalues <- matrix(NA, nrow=nSamples, ncol=nCoef)
     Y <- Xb <- X %*% beta # initialize
     Proj <- XXinv %*% t(X)
@@ -108,7 +118,8 @@ roprobit <- function(formula, group.ID, data, na.last=T, niter=500, thin=10, bur
       }
       # estimate linear model
       
-      beta <- Proj %*% Y
+      #beta <- Proj %*% Y
+      beta <- ProjnotNA %*% Y[which.notNA]
       #beta <- rnorm(1, beta.hat, XXinv) # normal prior for beta
       # data$Y_ <- Y_
       # fit <- lm(regform, data=data)
@@ -117,12 +128,14 @@ roprobit <- function(formula, group.ID, data, na.last=T, niter=500, thin=10, bur
       Xb <- X %*% beta
     }
     
-    outdata$latentvalution <- res$Y
+    outdata$Xb <- Xb
+    outdata$latentvalution <- Y
     
   } else if (method == 'Gibbs') {
-    res <- roprobit_internal(X=X, XXinv=XXinv, niter=niter, thin=thin, ChoiceSetLength=ChoiceSetLength, ROLLength=ROL.length, nCores=nCores)
+    res <- roprobit_internal(X=X, XXinv=XXinv, niterR=niter, thinR=thin, initparm=beta, ChoiceSetLength=ChoiceSetLength, ROLLength=ROL.length, nCores=nCores)
     betavalues <- res$betadraws
     outdata$latentvalution <- res$Y
+    outdata$Xb <- res$Xb
   } else if (method == 'MSL') {
     print('Maximum simulated likelihood method not yet implemented.')
     return(0)
