@@ -7,8 +7,8 @@
 using namespace Rcpp;
 
 // roprobit_internal
-List roprobit_internal(arma::sp_mat X, arma::sp_mat XXinv, int niterR, int thinR, Rcpp::NumericMatrix initparm, Rcpp::NumericVector ChoiceSetLengthR, Rcpp::NumericVector ROLLengthR, int nCores);
-RcppExport SEXP _roprobit_roprobit_internal(SEXP XSEXP, SEXP XXinvSEXP, SEXP niterRSEXP, SEXP thinRSEXP, SEXP initparmSEXP, SEXP ChoiceSetLengthRSEXP, SEXP ROLLengthRSEXP, SEXP nCoresSEXP) {
+List roprobit_internal(arma::sp_mat X, arma::sp_mat XXinv, int niterR, int thinR, Rcpp::NumericMatrix initparm, Rcpp::NumericVector ChoiceSetLengthR, Rcpp::NumericVector ROLLengthR, Rcpp::NumericVector GroupIDsR, int nCores, bool demeanY);
+RcppExport SEXP _roprobit_roprobit_internal(SEXP XSEXP, SEXP XXinvSEXP, SEXP niterRSEXP, SEXP thinRSEXP, SEXP initparmSEXP, SEXP ChoiceSetLengthRSEXP, SEXP ROLLengthRSEXP, SEXP GroupIDsRSEXP, SEXP nCoresSEXP, SEXP demeanYSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -19,14 +19,16 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type initparm(initparmSEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericVector >::type ChoiceSetLengthR(ChoiceSetLengthRSEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericVector >::type ROLLengthR(ROLLengthRSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type GroupIDsR(GroupIDsRSEXP);
     Rcpp::traits::input_parameter< int >::type nCores(nCoresSEXP);
-    rcpp_result_gen = Rcpp::wrap(roprobit_internal(X, XXinv, niterR, thinR, initparm, ChoiceSetLengthR, ROLLengthR, nCores));
+    Rcpp::traits::input_parameter< bool >::type demeanY(demeanYSEXP);
+    rcpp_result_gen = Rcpp::wrap(roprobit_internal(X, XXinv, niterR, thinR, initparm, ChoiceSetLengthR, ROLLengthR, GroupIDsR, nCores, demeanY));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_roprobit_roprobit_internal", (DL_FUNC) &_roprobit_roprobit_internal, 8},
+    {"_roprobit_roprobit_internal", (DL_FUNC) &_roprobit_roprobit_internal, 10},
     {NULL, NULL, 0}
 };
 

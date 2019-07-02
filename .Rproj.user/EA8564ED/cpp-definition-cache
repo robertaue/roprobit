@@ -68,16 +68,37 @@
     {
         "definitions" : [
             {
+                "column" : 5,
+                "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/demean.cpp",
+                "kind" : 6,
+                "line" : 7,
+                "name" : "demean(double *, int *, unsigned int)",
+                "parent_name" : "",
+                "usr" : "c:@F@demean#*d#*I#i#"
+            }
+        ],
+        "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/demean.cpp",
+        "file_last_write" : 1562049334
+    },
+    {
+        "definitions" : [
+        ],
+        "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/demean.h",
+        "file_last_write" : 1561995893
+    },
+    {
+        "definitions" : [
+            {
                 "column" : 6,
                 "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/roprobit_internal.cpp",
                 "kind" : 6,
-                "line" : 30,
-                "name" : "roprobit_internal(arma::sp_mat, arma::sp_mat, int, int, Rcpp::NumericMatrix, Rcpp::NumericVector, Rcpp::NumericVector, int)",
+                "line" : 31,
+                "name" : "roprobit_internal(arma::sp_mat, arma::sp_mat, int, int, Rcpp::NumericMatrix, Rcpp::NumericVector, Rcpp::NumericVector, Rcpp::NumericVector, int, bool)",
                 "parent_name" : "",
-                "usr" : "c:@F@roprobit_internal#$@N@arma@C@SpMat>#d#S0_#I#I#$@N@Rcpp@C@Matrix>#VI14#@N@Rcpp@CT>1#T@PreserveStorage#$@N@Rcpp@C@Vector>#VI14#@N@Rcpp@CT>1#T@PreserveStorage#S2_#I#"
+                "usr" : "c:@F@roprobit_internal#$@N@arma@C@SpMat>#d#S0_#I#I#$@N@Rcpp@C@Matrix>#VI14#@N@Rcpp@CT>1#T@PreserveStorage#$@N@Rcpp@C@Vector>#VI14#@N@Rcpp@CT>1#T@PreserveStorage#S2_#S2_#I#b#"
             }
         ],
         "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/roprobit_internal.cpp",
-        "file_last_write" : 1560610161
+        "file_last_write" : 1562073123
     }
 ]

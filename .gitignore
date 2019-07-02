@@ -9,3 +9,8 @@ LOG.txt
 .Rhistory
 roprobit.Rproj
 
+.Rproj.user/EA8564ED/cpp-definition-cache
+.Rproj.user/EA8564ED/pcs/source-pane.pper
+R/RcppExports.R
+src/RcppExports.cpp
+roprobit.Rproj
