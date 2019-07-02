@@ -112,7 +112,7 @@ List roprobit_internal(arma::sp_mat X,
           lower_bound = -INF;
         }
         // draw truncated error terms
-        u = ( lower_bound<upper_bound ? truncn2(0, 1, lower_bound, upper_bound) : lower_bound );
+        u = ( lower_bound<upper_bound ? truncn2(0, 1, lower_bound, upper_bound) : upper_bound );
         // Rcpp::Rcout << "i=" << i << ", r=" << r << ", upper_bound=" << upper_bound << ", lower_bound=" << lower_bound << ", u=" << u << "\n";
         Y[k] = Xb_k + u;
         // update maximum unranked and minimum ranked utility
