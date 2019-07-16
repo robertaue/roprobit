@@ -6,6 +6,7 @@
 #include <time.h>
 #include <omp.h>
 #include "aux_functions.h"
+#include "demean.h"
 
 #define INF arma::datum::inf
 #define FMIN(a, b) ((a) < (b) ? (a) : (b))
@@ -34,7 +35,9 @@ List roprobit_internal(arma::sp_mat X,
                        Rcpp::NumericMatrix initparm, // initial parameters
                        Rcpp::NumericVector ChoiceSetLengthR,
                        Rcpp::NumericVector ROLLengthR,
-                       int nCores) {
+                       Rcpp::NumericVector GroupIDsR,
+                       int nCores,
+                       bool demeanY) {
   // initialize variables
   arma::uword nIDs=ChoiceSetLengthR.length(), niter=niterR, thin=thinR;
   arma::uword chunk5percent = floor( (double) niter / (double) 20);
@@ -51,8 +54,10 @@ List roprobit_internal(arma::sp_mat X,
   arma::mat betavalues = arma::zeros(Nsamples, X.n_cols);
   arma::colvec Y = X*beta;
   arma::colvec Xb = Y;
+  arma::Col<int> GroupIDs = Rcpp::as<arma::Col<int>>( GroupIDsR);
   //arma::mat XXinv = arma::spsolve(trans(X)*X, arma::eye(X.n_cols, X.n_cols)); // requires superLU solver ...
   arma::sp_mat Proj = XXinv * trans(X);
+  arma::mat XXinv_dense(XXinv); // quick & dirty, need dense matrix for cholesky decomp.
   arma::vec MaxUnranked(nIDs, fill::zeros); // cannot fill directly with INF
   //arma::vec MinRanked(nIDs, fill::zeros);
   for (arma::uword i=0; i<nIDs; i++) {
@@ -113,6 +118,7 @@ List roprobit_internal(arma::sp_mat X,
         }
         // draw truncated error terms
         u = ( lower_bound<upper_bound ? truncn2(0, 1, lower_bound, upper_bound) : upper_bound );
+        //if (u<lower_bound || u>upper_bound) printf("iter=%d, i=%d, r=%d, lower_bound=%f, upper_bound=%f, u=%f\n", iter, i, r, lower_bound, upper_bound, u);
         // Rcpp::Rcout << "i=" << i << ", r=" << r << ", upper_bound=" << upper_bound << ", lower_bound=" << lower_bound << ", u=" << u << "\n";
         Y[k] = Xb_k + u;
         // update maximum unranked and minimum ranked utility
@@ -132,7 +138,8 @@ List roprobit_internal(arma::sp_mat X,
  // estimate linear model   
 #pragma omp single
 {
-    beta = Proj*Y;
+    if (demeanY) demean(Y.memptr(), GroupIDs.memptr(), Y.n_elem);
+    beta = mvrnormArma(Proj*Y, XXinv_dense, 1); //beta = Proj*Y;
     if ( (iter % thin == 0) ) betavalues.row(iter/thin) = trans(beta);
     Xb = X*beta;
     

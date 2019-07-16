@@ -16,7 +16,7 @@
 #' 
 
 
-roprobit <- function(formula, group.ID, choice.ID=NULL, data, na.last=T, niter=500, thin=10, burnin=50, method='Gibbs', initparm=NULL, nCores=1) {
+roprobit <- function(formula, group.ID, choice.ID=NULL, data, na.last=T, demean=F, niter=500, thin=10, burnin=50, method='Gibbs', initparm=NULL, nCores=1) {
   
   # consistency checks
   stopifnot(method %in% c('MSL','Gibbs', 'Gibbs.R'))
@@ -31,26 +31,33 @@ roprobit <- function(formula, group.ID, choice.ID=NULL, data, na.last=T, niter=5
   nSamples <- floor(niter/thin)
   stopifnot(burnin<=nSamples)
   
-  # generate design matrix and bring data in order
+  # bring data in order
   order.vec <- order(data[[group.ID]], data[[rankvar]], na.last=TRUE)
-  
   data <- data[order.vec,]
   IDs <- data[[group.ID]]
   nIDs <- length(unique(IDs))
   ROL.length <- aggregate(x=data[[rankvar]], by=list(group.ID=data[[group.ID]]), FUN=function(z) sum(!is.na(z)))[,2]
+  
+  # de-mean variables within group.ID
+  if (demean)
+    for (v in varnames) data[[v]] <- data[[v]] - ave(data[[v]], data[[group.ID]], FUN=mean)
+  
+  # generate design matrix
   if (na.last) { 
     ChoiceSetLength <- as.vector(table(IDs)) 
     # override default behavious to drop rows where the depvar is missing:
     data$zdheiffuj82j <- 1
     X <- sparse.model.matrix(update(formula, zdheiffuj82j~.), data)
     outdata <- data[,c(group.ID, rankvar, choice.ID)]
-    which.notNA <- which(!is.na(data[[rankvar]]))
-    XnotNA <- X[which.notNA,]
-    ProjnotNA <- solve(t(XnotNA)%*%XnotNA) %*% t(XnotNA)
+    GroupIDsR <- data[[group.ID]]
+    #which.notNA <- which(!is.na(data[[rankvar]]))
+    #XnotNA <- X[which.notNA,]
+    #ProjnotNA <- solve(t(XnotNA)%*%XnotNA) %*% t(XnotNA)
   } else { 
     ChoiceSetLength <- ROL.length 
     X <- sparse.model.matrix(formula, data) # will omit rows where rank information is missing
     outdata <- data[!is.na(data[[rankvar]]),c(group.ID, rankvar, choice.ID)]
+    GroupIDsR <- data[[group.ID]][!is.na(data[[rankvar]])]
   }
   nCoef <- dim(X)[2]
   MaxUnranked <- rep(-Inf, nIDs)
@@ -118,8 +125,8 @@ roprobit <- function(formula, group.ID, choice.ID=NULL, data, na.last=T, niter=5
       }
       # estimate linear model
       
-      #beta <- Proj %*% Y
-      beta <- ProjnotNA %*% Y[which.notNA]
+      beta <- Proj %*% Y
+      #beta <- ProjnotNA %*% Y[which.notNA]
       #beta <- rnorm(1, beta.hat, XXinv) # normal prior for beta
       # data$Y_ <- Y_
       # fit <- lm(regform, data=data)
@@ -132,7 +139,8 @@ roprobit <- function(formula, group.ID, choice.ID=NULL, data, na.last=T, niter=5
     outdata$latentvalution <- Y
     
   } else if (method == 'Gibbs') {
-    res <- roprobit_internal(X=X, XXinv=XXinv, niterR=niter, thinR=thin, initparm=beta, ChoiceSetLength=ChoiceSetLength, ROLLength=ROL.length, nCores=nCores)
+    res <- roprobit_internal(X=X, XXinv=XXinv, niterR=niter, thinR=thin, initparm=beta, ChoiceSetLength=ChoiceSetLength, 
+                             ROLLength=ROL.length, nCores=nCores, demeanY=demean, GroupIDsR=GroupIDsR)
     betavalues <- res$betadraws
     outdata$latentvalution <- res$Y
     outdata$Xb <- res$Xb
