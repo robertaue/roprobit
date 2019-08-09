@@ -1,4 +1,6 @@
 // Some helper functions - se stabit2Sel2.cpp
+#define ARMA_NO_DEBUG
+//#define DEBUG
 #include <RcppArmadillo.h>
 #include "aux_functions.h"
 using namespace Rcpp;
