@@ -16,7 +16,7 @@
 #' 
 
 
-roprobit <- function(formula, group.ID, choice.ID=NULL, data, na.last=T, demean=F, niter=500, thin=10, burnin=50, method='Gibbs', initparm=NULL, nCores=1) {
+roprobit <- function(formula, group.ID, choice.ID=NULL, data, na.last=T, demean=F, niter=500, thin=10, burnin=50, InnerIter=1, method='Gibbs', initparm=NULL, nCores=1) {
   
   # consistency checks
   stopifnot(method %in% c('MSL','Gibbs', 'Gibbs.R'))
@@ -38,10 +38,6 @@ roprobit <- function(formula, group.ID, choice.ID=NULL, data, na.last=T, demean=
   nIDs <- length(unique(IDs))
   ROL.length <- aggregate(x=data[[rankvar]], by=list(group.ID=data[[group.ID]]), FUN=function(z) sum(!is.na(z)))[,2]
   
-  # de-mean variables within group.ID
-  if (demean)
-    for (v in varnames) data[[v]] <- data[[v]] - ave(data[[v]], data[[group.ID]], FUN=mean)
-  
   # generate design matrix
   if (na.last) { 
     ChoiceSetLength <- as.vector(table(IDs)) 
@@ -59,10 +55,16 @@ roprobit <- function(formula, group.ID, choice.ID=NULL, data, na.last=T, demean=
     outdata <- data[!is.na(data[[rankvar]]),c(group.ID, rankvar, choice.ID)]
     GroupIDsR <- data[[group.ID]][!is.na(data[[rankvar]])]
   }
+  
+  # de-mean variables within group.ID
+  if (demean)
+    for (v in varnames) X[,colnames(X)==v] <- X[,colnames(X)==v] - ave(X[,colnames(X)==v], data[[group.ID]], FUN=mean)
+  
   nCoef <- dim(X)[2]
   MaxUnranked <- rep(-Inf, nIDs)
   MinRanked <- rep(Inf, nIDs)
   XXinv <- solve(t(X)%*%X)
+  
   
   # initial parameter
   if (is.null(initparm)) {
@@ -139,7 +141,7 @@ roprobit <- function(formula, group.ID, choice.ID=NULL, data, na.last=T, demean=
     outdata$latentvalution <- Y
     
   } else if (method == 'Gibbs') {
-    res <- roprobit_internal(X=X, XXinv=XXinv, niterR=niter, thinR=thin, initparm=beta, ChoiceSetLength=ChoiceSetLength, 
+    res <- roprobit_internal(X=X, XXinv=XXinv, niterR=niter, thinR=thin, InnerIterR=InnerIter, initparm=beta, ChoiceSetLength=ChoiceSetLength, 
                              ROLLength=ROL.length, nCores=nCores, demeanY=demean, GroupIDsR=GroupIDsR)
     betavalues <- res$betadraws
     outdata$latentvalution <- res$Y
