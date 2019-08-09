@@ -61,13 +61,7 @@ List roprobit_internal(arma::sp_mat X,
   arma::Col<int> GroupIDs = Rcpp::as<arma::Col<int>>( GroupIDsR);
   //arma::mat XXinv = arma::spsolve(trans(X)*X, arma::eye(X.n_cols, X.n_cols)); // requires superLU solver ...
   arma::sp_mat Proj = XXinv * trans(X);
-  arma::mat XXinv_dense(XXinv); // quick & dirty, need dense matrix for cholesky decomp.
-  arma::vec MaxUnranked(nIDs, fill::zeros); // cannot fill directly with INF
-  //arma::vec MinRanked(nIDs, fill::zeros);
-  for (arma::uword i=0; i<nIDs; i++) {
-    MaxUnranked[i] = -INF;
-    //MinRanked[i] = INF;
-  }
+  arma::mat XXinv_dense(XXinv); // quick & dirty, need dense matrix for cholesky decomp
   arma::uvec ChoiceSetLength = Rcpp::as<arma::uvec>( ChoiceSetLengthR );
   arma::uvec ROLLength = Rcpp::as<arma::uvec>( ROLLengthR );
   arma::uvec StartPosition = cumsum(ChoiceSetLength) - ChoiceSetLength;
@@ -166,7 +160,6 @@ List roprobit_internal(arma::sp_mat X,
   if (demeanY) printf("tid=%d: demeaning latent variables ...\n", omp_get_thread_num());
 #endif
     if (demeanY) demean(Y.memptr(), GroupIDs.memptr(), Y.n_elem);
-    beta = mvrnormArma(Proj*Y, XXinv_dense, 1); //beta = Proj*Y;
 #ifdef DEBUG
     printf("tid=%d: computing beta ...\n", omp_get_thread_num());
     printf("Proj is %d x %d, Y is %d x %d and XXinv_dense is %d x %d.\n", Proj.n_rows, Proj.n_cols, Y.n_rows, Y.n_cols, XXinv_dense.n_rows, XXinv_dense.n_cols);

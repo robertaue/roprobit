@@ -5,7 +5,7 @@
                 "column" : 8,
                 "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/aux_functions.cpp",
                 "kind" : 6,
-                "line" : 12,
+                "line" : 14,
                 "name" : "norm_rs(double, double)",
                 "parent_name" : "",
                 "usr" : "c:@F@norm_rs#d#d#"
@@ -14,7 +14,7 @@
                 "column" : 8,
                 "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/aux_functions.cpp",
                 "kind" : 6,
-                "line" : 25,
+                "line" : 27,
                 "name" : "half_norm_rs(double, double)",
                 "parent_name" : "",
                 "usr" : "c:@F@half_norm_rs#d#d#"
@@ -23,7 +23,7 @@
                 "column" : 8,
                 "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/aux_functions.cpp",
                 "kind" : 6,
-                "line" : 38,
+                "line" : 40,
                 "name" : "unif_rs(double, double)",
                 "parent_name" : "",
                 "usr" : "c:@F@unif_rs#d#d#"
@@ -32,7 +32,7 @@
                 "column" : 8,
                 "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/aux_functions.cpp",
                 "kind" : 6,
-                "line" : 63,
+                "line" : 65,
                 "name" : "exp_rs(double, double)",
                 "parent_name" : "",
                 "usr" : "c:@F@exp_rs#d#d#"
@@ -41,7 +41,7 @@
                 "column" : 8,
                 "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/aux_functions.cpp",
                 "kind" : 6,
-                "line" : 90,
+                "line" : 92,
                 "name" : "truncn2(double, double, double, double)",
                 "parent_name" : "",
                 "usr" : "c:@F@truncn2#d#d#d#d#"
@@ -50,20 +50,38 @@
                 "column" : 14,
                 "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/aux_functions.cpp",
                 "kind" : 6,
-                "line" : 150,
-                "name" : "mvrnormArma(arma::colvec, arma::mat, int)",
+                "line" : 152,
+                "name" : "mvrnormArma(arma::colvec, arma::mat)",
                 "parent_name" : "",
-                "usr" : "c:@F@mvrnormArma#$@N@arma@C@Col>#d#$@N@arma@C@Mat>#d#I#"
+                "usr" : "c:@F@mvrnormArma#$@N@arma@C@Col>#d#$@N@arma@C@Mat>#d#"
+            },
+            {
+                "column" : 8,
+                "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/aux_functions.cpp",
+                "kind" : 6,
+                "line" : 182,
+                "name" : "RationalApproximation(double)",
+                "parent_name" : "",
+                "usr" : "c:@F@RationalApproximation#d#"
+            },
+            {
+                "column" : 8,
+                "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/aux_functions.cpp",
+                "kind" : 6,
+                "line" : 192,
+                "name" : "NormalCDFInverse(double)",
+                "parent_name" : "",
+                "usr" : "c:@F@NormalCDFInverse#d#"
             }
         ],
         "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/aux_functions.cpp",
-        "file_last_write" : 1548321394
+        "file_last_write" : 1565261503
     },
     {
         "definitions" : [
         ],
         "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/aux_functions.h",
-        "file_last_write" : 1548056278
+        "file_last_write" : 1565261036
     },
     {
         "definitions" : [
@@ -89,16 +107,103 @@
     {
         "definitions" : [
             {
+                "column" : 8,
+                "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/myrandom.cpp",
+                "kind" : 6,
+                "line" : 14,
+                "name" : "runif",
+                "parent_name" : "",
+                "usr" : "c:@F@runif#"
+            },
+            {
+                "column" : 8,
+                "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/myrandom.cpp",
+                "kind" : 6,
+                "line" : 21,
+                "name" : "rnorm",
+                "parent_name" : "",
+                "usr" : "c:@F@rnorm#"
+            },
+            {
+                "column" : 8,
+                "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/myrandom.cpp",
+                "kind" : 6,
+                "line" : 33,
+                "name" : "dnorm_std(double)",
+                "parent_name" : "",
+                "usr" : "c:@F@dnorm_std#d#"
+            },
+            {
+                "column" : 8,
+                "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/myrandom.cpp",
+                "kind" : 6,
+                "line" : 38,
+                "name" : "rexp(double)",
+                "parent_name" : "",
+                "usr" : "c:@F@rexp#d#"
+            }
+        ],
+        "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/myrandom.cpp",
+        "file_last_write" : 1564649761
+    },
+    {
+        "definitions" : [
+        ],
+        "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/myrandom.h",
+        "file_last_write" : 1564649670
+    },
+    {
+        "definitions" : [
+            {
                 "column" : 6,
                 "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/roprobit_internal.cpp",
                 "kind" : 6,
-                "line" : 31,
-                "name" : "roprobit_internal(arma::sp_mat, arma::sp_mat, int, int, Rcpp::NumericMatrix, Rcpp::NumericVector, Rcpp::NumericVector, Rcpp::NumericVector, int, bool)",
+                "line" : 34,
+                "name" : "roprobit_internal(arma::sp_mat, arma::sp_mat, int, int, int, Rcpp::NumericMatrix, Rcpp::NumericVector, Rcpp::NumericVector, Rcpp::NumericVector, int, bool)",
                 "parent_name" : "",
-                "usr" : "c:@F@roprobit_internal#$@N@arma@C@SpMat>#d#S0_#I#I#$@N@Rcpp@C@Matrix>#VI14#@N@Rcpp@CT>1#T@PreserveStorage#$@N@Rcpp@C@Vector>#VI14#@N@Rcpp@CT>1#T@PreserveStorage#S2_#S2_#I#b#"
+                "usr" : "c:@F@roprobit_internal#$@N@arma@C@SpMat>#d#S0_#I#I#I#$@N@Rcpp@C@Matrix>#VI14#@N@Rcpp@CT>1#T@PreserveStorage#$@N@Rcpp@C@Vector>#VI14#@N@Rcpp@CT>1#T@PreserveStorage#S2_#S2_#I#b#"
             }
         ],
         "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/roprobit_internal.cpp",
-        "file_last_write" : 1563181029
+        "file_last_write" : 1565336718
+    },
+    {
+        "definitions" : [
+            {
+                "column" : 8,
+                "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/truncnorm_approx.cpp",
+                "kind" : 6,
+                "line" : 5,
+                "name" : "qnorm_approx(double)",
+                "parent_name" : "",
+                "usr" : "c:@F@qnorm_approx#d#"
+            },
+            {
+                "column" : 8,
+                "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/truncnorm_approx.cpp",
+                "kind" : 6,
+                "line" : 19,
+                "name" : "pnorm_approx(double)",
+                "parent_name" : "",
+                "usr" : "c:@F@pnorm_approx#d#"
+            },
+            {
+                "column" : 8,
+                "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/truncnorm_approx.cpp",
+                "kind" : 6,
+                "line" : 43,
+                "name" : "truncnorm_approx(double, double, double, double, double)",
+                "parent_name" : "",
+                "usr" : "c:@F@truncnorm_approx#d#d#d#d#d#"
+            }
+        ],
+        "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/truncnorm_approx.cpp",
+        "file_last_write" : 1565263515
+    },
+    {
+        "definitions" : [
+        ],
+        "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/truncnorm_approx.h",
+        "file_last_write" : 1565264977
     }
 ]
