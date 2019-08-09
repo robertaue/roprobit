@@ -161,8 +161,23 @@ List roprobit_internal(arma::sp_mat X,
  // estimate linear model   
 #pragma omp single
 {
+#ifdef DEBUG
+  if (demeanY) printf("tid=%d: demeaning latent variables ...\n", omp_get_thread_num());
+#endif
     if (demeanY) demean(Y.memptr(), GroupIDs.memptr(), Y.n_elem);
     beta = mvrnormArma(Proj*Y, XXinv_dense, 1); //beta = Proj*Y;
+#ifdef DEBUG
+    printf("tid=%d: computing beta ...\n", omp_get_thread_num());
+    printf("Proj is %d x %d, Y is %d x %d and XXinv_dense is %d x %d.\n", Proj.n_rows, Proj.n_cols, Y.n_rows, Y.n_cols, XXinv_dense.n_rows, XXinv_dense.n_cols);
+#endif
+#ifdef DEBUG
+    printf("beta_hat is %d x %d.\n", beta_hat.n_rows, beta_hat.n_cols);
+#endif
+#ifdef DEBUG
+    printf("tid=%d: updating Xb vector ...\n", omp_get_thread_num());
+    printf("X is %d x %d, beta is %d x %d \n", X.n_rows, X.n_cols, beta.n_rows, beta.n_cols);
+    std::cout << "beta: " << beta << std::endl;
+#endif
     if ( (iter % thin == 0) ) betavalues.row(iter/thin) = trans(beta);
     Xb = X*beta;
     
