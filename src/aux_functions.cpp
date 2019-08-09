@@ -147,8 +147,11 @@ double truncn2(double mu, double sigma, double lower, double upper)
 // from http://gallery.rcpp.org/articles/simulate-multivariate-normal/
 // ---------------------------------------------  
 
-arma::colvec mvrnormArma(arma::colvec mu, arma::mat sigma, int ncols) {
-  arma::rowvec y = as<arma::rowvec>(rnorm(ncols)); //arma::randn(1,ncols)
+arma::colvec mvrnormArma(arma::colvec mu, arma::mat sigma) {
+#ifdef DEBUG
+  printf("mvrnormArma: mu is %d x %d, \n", mu.n_rows, mu.n_cols);
+#endif
+  arma::rowvec y = arma::randn(1,mu.n_rows); // as<arma::rowvec>(arma::randn(1,ncols)); //arma::randn(1,ncols)
   // include error handling for cholesky inverse - sigma must be positive definite,
   // see https://math.stackexchange.com/questions/462682/why-does-the-cholesky-decomposition-requires-a-positive-definite-matrix
   arma::mat sigma_chol = arma::zeros(sigma.n_rows, sigma.n_rows); // empty container for output (square)
