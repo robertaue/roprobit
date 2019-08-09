@@ -7,10 +7,13 @@
 #include <omp.h>
 #include "aux_functions.h"
 #include "demean.h"
+#include "truncnorm_approx.h"
 
 #define INF arma::datum::inf
 #define FMIN(a, b) ((a) < (b) ? (a) : (b))
 #define FMAX(a, b) ((a) < (b) ? (a) : (b))
+#define TRUNCNORM(mu, sigma, lower, upper) truncn2(mu, sigma, lower, upper)
+//#define TRUNCNORM(mu, sigma, lower, upper) truncnorm_approx(runiform(gen), mu, sigma, lower, upper)
 
 using namespace Rcpp;
 using namespace arma;
@@ -81,6 +84,26 @@ List roprobit_internal(arma::sp_mat X,
     MaxUnranked_i=-INF, MinRanked_i=INF,
     u=0, Xb_k=0;
   
+  // initialize the random number generator in this thread
+  std::random_device rd;  // a random number that be used to seed the random number engine
+  std::mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
+  // Uniform random number generator, see https://en.cppreference.com/w/cpp/numeric/random/uniform_real_distribution
+  std::uniform_real_distribution<double> runiform(0, 1); 
+  
+  // initialize latent errors U
+  // initially, b=0 so that U can be drawn from N(0,1) distribution
+  // I use an approximation to the quantiles of the normal distribution, 
+  // see https://math.stackexchange.com/questions/28751/proof-of-upper-tail-inequality-for-standard-normal-distribution/28754#28754
+#pragma omp single
+  for (i=0; i<nIDs; i++) {
+    Nchoices_i = ChoiceSetLength[i];
+    for (r=1; r<=Nchoices_i; r++) {
+      Y[k] = qnorm_approx(1 - (double) (2*r-1)/ (double) (2*Nchoices_i));
+      //Y[k] = U[k];
+      k++;
+    }
+  }
+  
   for (iter=0; iter<niter; iter++) {
     
 #ifdef DEBUG 
@@ -117,7 +140,7 @@ List roprobit_internal(arma::sp_mat X,
           lower_bound = -INF;
         }
         // draw truncated error terms
-        u = ( lower_bound<upper_bound ? truncn2(0, 1, lower_bound, upper_bound) : upper_bound );
+        u = ( lower_bound<upper_bound ? TRUNCNORM(0.0, 1.0, lower_bound, upper_bound) : upper_bound );
         //if (u<lower_bound || u>upper_bound) printf("iter=%d, i=%d, r=%d, lower_bound=%f, upper_bound=%f, u=%f\n", iter, i, r, lower_bound, upper_bound, u);
         // Rcpp::Rcout << "i=" << i << ", r=" << r << ", upper_bound=" << upper_bound << ", lower_bound=" << lower_bound << ", u=" << u << "\n";
         Y[k] = Xb_k + u;
