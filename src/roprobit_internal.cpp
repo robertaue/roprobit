@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <omp.h>
+#include <random>
 #include "aux_functions.h"
 #include "demean.h"
 #include "truncnorm_approx.h"
@@ -29,12 +30,12 @@ using namespace arma;
 //
 
 
-
 // [[Rcpp::export]]
 List roprobit_internal(arma::sp_mat X,
                        arma::sp_mat XXinv,
                        int niterR,
                        int thinR,
+                       int InnerIterR,
                        Rcpp::NumericMatrix initparm, // initial parameters
                        Rcpp::NumericVector ChoiceSetLengthR,
                        Rcpp::NumericVector ROLLengthR,
@@ -42,7 +43,7 @@ List roprobit_internal(arma::sp_mat X,
                        int nCores,
                        bool demeanY) {
   // initialize variables
-  arma::uword nIDs=ChoiceSetLengthR.length(), niter=niterR, thin=thinR;
+  arma::uword nIDs=ChoiceSetLengthR.length(), niter=niterR, thin=thinR, InnerIter=InnerIterR;
   arma::uword chunk5percent = floor( (double) niter / (double) 20);
   
   omp_set_num_threads(nCores);
@@ -74,7 +75,7 @@ List roprobit_internal(arma::sp_mat X,
 #pragma omp parallel
 {
   // initialize thread-private variables
-  arma::uword k=0, i=0, Nchoices_i=1, Nranked_i=1, r=1, iter=0;
+  arma::uword k=0, i=0, n=1, Nchoices_i=1, Nranked_i=1, r=1, iter=0;
   double upper_bound=INF, lower_bound=-INF, 
     MaxUnranked_i=-INF, MinRanked_i=INF,
     u=0, Xb_k=0;
@@ -110,6 +111,7 @@ List roprobit_internal(arma::sp_mat X,
 #ifdef DEBUG
       printf("tid=%d: i=%d\n", omp_get_thread_num(), i);
 #endif
+      for (n=0; n<InnerIter; n++) {
       k = StartPosition[i];
       // store variables to reduce memory access
       Nchoices_i = ChoiceSetLength[i];
@@ -146,6 +148,7 @@ List roprobit_internal(arma::sp_mat X,
         }
         // increment vector position
         k += 1;
+      }
       }
     }
     
