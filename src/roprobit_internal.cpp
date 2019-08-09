@@ -53,6 +53,7 @@ List roprobit_internal(arma::sp_mat X,
   // generate helper variables
   int Nsamples = floor(niter / thin);
   //arma::colvec beta = arma::zeros(X.n_cols,1);
+  arma::colvec beta_hat = Rcpp::as<arma::colvec>( initparm );
   arma::colvec beta = Rcpp::as<arma::colvec>( initparm );
   arma::mat betavalues = arma::zeros(Nsamples, X.n_cols);
   arma::colvec Y = X*beta;
@@ -170,9 +171,11 @@ List roprobit_internal(arma::sp_mat X,
     printf("tid=%d: computing beta ...\n", omp_get_thread_num());
     printf("Proj is %d x %d, Y is %d x %d and XXinv_dense is %d x %d.\n", Proj.n_rows, Proj.n_cols, Y.n_rows, Y.n_cols, XXinv_dense.n_rows, XXinv_dense.n_cols);
 #endif
+    beta_hat = Proj*Y;
 #ifdef DEBUG
     printf("beta_hat is %d x %d.\n", beta_hat.n_rows, beta_hat.n_cols);
 #endif
+    beta = mvrnormArma(beta_hat, XXinv_dense); //beta = Proj*Y;
 #ifdef DEBUG
     printf("tid=%d: updating Xb vector ...\n", omp_get_thread_num());
     printf("X is %d x %d, beta is %d x %d \n", X.n_rows, X.n_cols, beta.n_rows, beta.n_cols);
