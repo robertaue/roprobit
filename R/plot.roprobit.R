@@ -1,11 +1,12 @@
 #' show diagnostic plot of an estimation object of class 'roprobit'
 #' 
 
-plot.roprobit <- function(x) {
-  nCoef <- length(x$coef)
+plot.roprobit <- function(x, which=1:min(4,length(x$coef))) {
+  #nCoef <- length(x$coef)
+  nCoef <- length(which)
   
   par(mfrow=c(nCoef,2))
-  for (k in 1:nCoef) {
+  for (k in which) {
     plot(x$betavalues[,k], type='l', main=names(x$coef)[k], xlab = 'MCMC samples', ylab = '')
     abline(h=x$coef[k], col="blue", lty=2)
     abline(v=x$burnin)
