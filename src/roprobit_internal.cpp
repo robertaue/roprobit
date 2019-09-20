@@ -12,7 +12,7 @@
 
 #define INF arma::datum::inf
 #define FMIN(a, b) ((a) < (b) ? (a) : (b))
-#define FMAX(a, b) ((a) < (b) ? (a) : (b))
+#define FMAX(a, b) ((a) > (b) ? (a) : (b))
 #define TRUNCNORM(mu, sigma, lower, upper) truncn2(mu, sigma, lower, upper)
 //#define TRUNCNORM(mu, sigma, lower, upper) truncnorm_approx(runiform(gen), mu, sigma, lower, upper)
 
