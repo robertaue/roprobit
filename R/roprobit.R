@@ -34,31 +34,34 @@ roprobit <- function(formula, group.ID, choice.ID=NULL, data, na.last=T, demean=
   # bring data in order
   order.vec <- order(data[[group.ID]], data[[rankvar]], na.last=TRUE)
   data <- data[order.vec,]
-  IDs <- data[[group.ID]]
-  nIDs <- length(unique(IDs))
+  #IDs <- data[[group.ID]]
+  nIDs <- length(data[[group.ID]])
   ROL.length <- aggregate(x=data[[rankvar]], by=list(group.ID=data[[group.ID]]), FUN=function(z) sum(!is.na(z)))[,2]
   
   # generate design matrix
   if (na.last) { 
-    ChoiceSetLength <- as.vector(table(IDs)) 
+    ChoiceSetLength <- as.vector(table(data[[group.ID]])) 
     # override default behavious to drop rows where the depvar is missing:
     data$zdheiffuj82j <- 1
-    X <- sparse.model.matrix(update(formula, zdheiffuj82j~.), data)
+    X <- sparse.model.matrix(update(formula, zdheiffuj82j~.), model.frame(update(formula, zdheiffuj82j~.), data, na.action='na.pass'))
     outdata <- data[,c(group.ID, rankvar, choice.ID)]
-    GroupIDsR <- data[[group.ID]]
+    outdata$GroupIDsR <- outdata[[group.ID]]
     #which.notNA <- which(!is.na(data[[rankvar]]))
     #XnotNA <- X[which.notNA,]
     #ProjnotNA <- solve(t(XnotNA)%*%XnotNA) %*% t(XnotNA)
   } else { 
     ChoiceSetLength <- ROL.length 
-    X <- sparse.model.matrix(formula, data) # will omit rows where rank information is missing
+    X <- sparse.model.matrix(formula, model.frame(formula, data[!is.na(data[[rankvar]]),], na.action='na.pass'))
     outdata <- data[!is.na(data[[rankvar]]),c(group.ID, rankvar, choice.ID)]
-    GroupIDsR <- data[[group.ID]][!is.na(data[[rankvar]])]
+    outdata$GroupIDsR <- outdata[[group.ID]]
   }
   
   # de-mean variables within group.ID
-  if (demean)
-    for (v in varnames) X[,colnames(X)==v] <- X[,colnames(X)==v] - ave(X[,colnames(X)==v], data[[group.ID]], FUN=mean)
+  if (demean) {
+    # for (v in varnames) X[,colnames(X)==v] <- X[,colnames(X)==v] - ave(X[,colnames(X)==v], data[[group.ID]], FUN=mean) 
+    groups <- sparse.model.matrix(~factor(GroupIDsR)-1,outdata)
+    X <- X - groups %*% ( t(groups) %*% X / colSums(groups) )
+  }
   
   nCoef <- dim(X)[2]
   MaxUnranked <- rep(-Inf, nIDs)
@@ -142,7 +145,7 @@ roprobit <- function(formula, group.ID, choice.ID=NULL, data, na.last=T, demean=
     
   } else if (method == 'Gibbs') {
     res <- roprobit_internal(X=X, XXinv=XXinv, niterR=niter, thinR=thin, InnerIterR=InnerIter, initparm=beta, ChoiceSetLength=ChoiceSetLength, 
-                             ROLLength=ROL.length, nCores=nCores, demeanY=demean, GroupIDsR=GroupIDsR)
+                             ROLLength=ROL.length, nCores=nCores, demeanY=demean, GroupIDsR=outdata$GroupIDsR)
     betavalues <- res$betadraws
     outdata$latentvalution <- res$Y
     outdata$Xb <- res$Xb

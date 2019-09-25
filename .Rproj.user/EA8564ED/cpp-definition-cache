@@ -54,34 +54,16 @@
                 "name" : "mvrnormArma(arma::colvec, arma::mat)",
                 "parent_name" : "",
                 "usr" : "c:@F@mvrnormArma#$@N@arma@C@Col>#d#$@N@arma@C@Mat>#d#"
-            },
-            {
-                "column" : 8,
-                "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/aux_functions.cpp",
-                "kind" : 6,
-                "line" : 182,
-                "name" : "RationalApproximation(double)",
-                "parent_name" : "",
-                "usr" : "c:@F@RationalApproximation#d#"
-            },
-            {
-                "column" : 8,
-                "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/aux_functions.cpp",
-                "kind" : 6,
-                "line" : 192,
-                "name" : "NormalCDFInverse(double)",
-                "parent_name" : "",
-                "usr" : "c:@F@NormalCDFInverse#d#"
             }
         ],
         "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/aux_functions.cpp",
-        "file_last_write" : 1565261503
+        "file_last_write" : 1568992843
     },
     {
         "definitions" : [
         ],
         "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/aux_functions.h",
-        "file_last_write" : 1565261036
+        "file_last_write" : 1565337202
     },
     {
         "definitions" : [
@@ -165,7 +147,7 @@
             }
         ],
         "file" : "C:/Users/RAU/OneDrive/zew/roprobit/src/roprobit_internal.cpp",
-        "file_last_write" : 1565336718
+        "file_last_write" : 1569396088
     },
     {
         "definitions" : [

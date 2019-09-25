@@ -13,8 +13,8 @@
 #define INF arma::datum::inf
 #define FMIN(a, b) ((a) < (b) ? (a) : (b))
 #define FMAX(a, b) ((a) > (b) ? (a) : (b))
-#define TRUNCNORM(mu, sigma, lower, upper) truncn2(mu, sigma, lower, upper)
-//#define TRUNCNORM(mu, sigma, lower, upper) truncnorm_approx(runiform(gen), mu, sigma, lower, upper)
+//#define TRUNCNORM(mu, sigma, lower, upper) truncn2(mu, sigma, lower, upper)
+#define TRUNCNORM(mu, sigma, lower, upper) truncnorm_approx(runiform(gen), mu, sigma, lower, upper)
 
 using namespace Rcpp;
 using namespace arma;
@@ -49,6 +49,8 @@ List roprobit_internal(arma::sp_mat X,
   omp_set_num_threads(nCores);
 #ifdef DEBUG
   std::cout.setf(std::ios::unitbuf); // for debugging
+	printf("we have %d DMUs \n", nIDs);
+	printf("dim(X) = %d x %d \n", X.n_rows, X.n_cols);
 #endif
   
   // generate helper variables
@@ -59,6 +61,9 @@ List roprobit_internal(arma::sp_mat X,
   arma::mat betavalues = arma::zeros(Nsamples, X.n_cols);
   arma::colvec Y = X*beta;
   arma::colvec Xb = Y;
+#ifdef DEBUG
+  printf("dim(Y) = %d x 1\n", Y.n_rows);
+#endif
   arma::Col<int> GroupIDs = Rcpp::as<arma::Col<int>>( GroupIDsR);
   //arma::mat XXinv = arma::spsolve(trans(X)*X, arma::eye(X.n_cols, X.n_cols)); // requires superLU solver ...
   arma::sp_mat Proj = XXinv * trans(X);
@@ -75,12 +80,18 @@ List roprobit_internal(arma::sp_mat X,
 #pragma omp parallel
 {
   // initialize thread-private variables
+#ifdef DEBUG 
+  printf("tid=%d: initializing thread-private variables\n", omp_get_thread_num());
+#endif
   arma::uword k=0, i=0, n=1, Nchoices_i=1, Nranked_i=1, r=1, iter=0;
   double upper_bound=INF, lower_bound=-INF, 
     MaxUnranked_i=-INF, MinRanked_i=INF,
     u=0, Xb_k=0;
   
   // initialize the random number generator in this thread
+#ifdef DEBUG 
+  printf("tid=%d: set up the RNG\n", omp_get_thread_num());
+#endif
   std::random_device rd;  // a random number that be used to seed the random number engine
   std::mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
   // Uniform random number generator, see https://en.cppreference.com/w/cpp/numeric/random/uniform_real_distribution
@@ -91,14 +102,26 @@ List roprobit_internal(arma::sp_mat X,
   // I use an approximation to the quantiles of the normal distribution, 
   // see https://math.stackexchange.com/questions/28751/proof-of-upper-tail-inequality-for-standard-normal-distribution/28754#28754
 #pragma omp single
+{
+#ifdef DEBUG 
+  printf("tid=%d: initalizing latent valuations\n", omp_get_thread_num());
+#endif
+	k = 0;
   for (i=0; i<nIDs; i++) {
     Nchoices_i = ChoiceSetLength[i];
+#ifdef DEBUG 
+  printf("tid=%d: DMU %d faces %d choices.\n", omp_get_thread_num(), i, Nchoices_i);
+#endif
     for (r=1; r<=Nchoices_i; r++) {
+#ifdef DEBUG 
+      //std::cout << "tid=" << omp_get_thread_num() << ": r=" << r << ", k=" << k << std::endl;
+#endif
       Y[k] = qnorm_approx(1 - (double) (2*r-1)/ (double) (2*Nchoices_i));
       //Y[k] = U[k];
       k++;
     }
   }
+}
   
   for (iter=0; iter<niter; iter++) {
     
