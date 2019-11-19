@@ -1,6 +1,5 @@
 \name{roprobit-package}
 \alias{roprobit-package}
-\alias{roprobit}
 \docType{package}
 \title{
 \packageTitle{roprobit}
