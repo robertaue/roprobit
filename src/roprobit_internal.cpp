@@ -51,6 +51,7 @@ List roprobit_internal(arma::sp_mat X,
   std::cout.setf(std::ios::unitbuf); // for debugging
 	printf("we have %d DMUs \n", nIDs);
 	printf("dim(X) = %d x %d \n", X.n_rows, X.n_cols);
+	printf("dim(inv(X'X)) = %d x %d \n", XXinv.n_rows, XXinv.n_cols);
 #endif
   
   // generate helper variables
@@ -66,7 +67,10 @@ List roprobit_internal(arma::sp_mat X,
 #endif
   arma::Col<int> GroupIDs = Rcpp::as<arma::Col<int>>( GroupIDsR);
   //arma::mat XXinv = arma::spsolve(trans(X)*X, arma::eye(X.n_cols, X.n_cols)); // requires superLU solver ...
-  arma::sp_mat Proj = XXinv * trans(X);
+  arma::mat Proj( XXinv * trans(X) );
+#ifdef DEBUG
+  printf("Projection matrix dim(Proj) = %d x %d \n", Proj.n_rows, Proj.n_cols);
+#endif
   arma::mat XXinv_dense(XXinv); // quick & dirty, need dense matrix for cholesky decomp
   arma::uvec ChoiceSetLength = Rcpp::as<arma::uvec>( ChoiceSetLengthR );
   arma::uvec ROLLength = Rcpp::as<arma::uvec>( ROLLengthR );

@@ -144,6 +144,7 @@ roprobit <- function(formula, group.ID, choice.ID=NULL, data, na.last=T, demean=
     outdata$latentvalution <- Y
     
   } else if (method == 'Gibbs') {
+	gc()
     res <- roprobit_internal(X=X, XXinv=XXinv, niterR=niter, thinR=thin, InnerIterR=InnerIter, initparm=beta, ChoiceSetLength=ChoiceSetLength, 
                              ROLLength=ROL.length, nCores=nCores, demeanY=demean, GroupIDsR=outdata$GroupIDsR)
     betavalues <- res$betadraws
