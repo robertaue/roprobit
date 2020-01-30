@@ -1,1 +1,0 @@
-int demean(double *values, int *grouping, unsigned int length);
