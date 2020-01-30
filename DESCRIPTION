@@ -1,11 +1,11 @@
 Package: roprobit
 Type: Package
-Title: Estimate a rank ordered probit model
+Title: Rank ordered probit estimation
 Version: 0.2
 Date: 2019-06-04
 Author: Robert Aue
-Maintainer: Who to complain to <yourfault@somewhere.net>
-Description: More about what it does (maybe more than one line)
+Maintainer: Robert Aue <robert.aue@hotmail.de>
+Description: A gibbs sample to estimate a rank ordered probit model.
 License: What license is it under?
 Imports: Rcpp (>= 1.0.0), Matrix, truncnorm, mvtnorm
 LinkingTo: Rcpp, RcppArmadillo
